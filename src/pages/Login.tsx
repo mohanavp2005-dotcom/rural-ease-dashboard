@@ -5,10 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sprout, Phone, KeyRound } from "lucide-react";
+import { Sprout, Phone, KeyRound, Lock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
   const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [loginMethod, setLoginMethod] = useState<"otp" | "password">("otp");
+  const { t, lang, setLang } = useLanguage();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -18,12 +21,12 @@ const Login = () => {
             <Sprout className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold">Rural BizManager</h1>
-          <p className="text-muted-foreground mt-1">Manage your business simply</p>
+          <p className="text-muted-foreground mt-1">{t("manage_business")}</p>
         </div>
 
         <div className="form-section">
           <div className="flex justify-end mb-4">
-            <Select defaultValue="en">
+            <Select value={lang} onValueChange={(v) => setLang(v as "en" | "ta")}>
               <SelectTrigger className="w-36">
                 <SelectValue />
               </SelectTrigger>
@@ -37,43 +40,69 @@ const Login = () => {
           {step === "phone" ? (
             <div className="space-y-4">
               <div>
-                <Label className="text-base">Mobile Number / Email</Label>
+                <Label className="text-base">{t("mobile_email")}</Label>
                 <div className="relative mt-1.5">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Enter mobile or email" className="pl-10 h-11 text-base" />
+                  <Input placeholder={t("enter_mobile_email")} className="pl-10 h-12 text-base" />
                 </div>
               </div>
+
+              {loginMethod === "password" && (
+                <div>
+                  <Label className="text-base">{t("password")}</Label>
+                  <div className="relative mt-1.5">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input type="password" placeholder={t("enter_password")} className="pl-10 h-12 text-base" />
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 <Checkbox id="remember" />
-                <Label htmlFor="remember" className="text-sm font-normal">Remember me</Label>
+                <Label htmlFor="remember" className="text-sm font-normal">{t("remember_me")}</Label>
               </div>
-              <Button className="w-full h-11 text-base" onClick={() => setStep("otp")}>
-                Send OTP
+
+              {loginMethod === "otp" ? (
+                <Button className="w-full h-12 text-base" onClick={() => setStep("otp")}>
+                  {t("send_otp")}
+                </Button>
+              ) : (
+                <Button className="w-full h-12 text-base" asChild>
+                  <Link to="/dashboard">{t("login")}</Link>
+                </Button>
+              )}
+
+              <Button
+                variant="ghost"
+                className="w-full text-sm"
+                onClick={() => setLoginMethod(loginMethod === "otp" ? "password" : "otp")}
+              >
+                {loginMethod === "otp" ? t("login_password") : t("login_otp")}
               </Button>
             </div>
           ) : (
             <div className="space-y-4">
               <div>
-                <Label className="text-base">Enter OTP</Label>
+                <Label className="text-base">{t("enter_otp")}</Label>
                 <div className="relative mt-1.5">
                   <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="6-digit OTP" className="pl-10 h-11 text-base tracking-widest" maxLength={6} />
+                  <Input placeholder="6-digit OTP" className="pl-10 h-12 text-base tracking-widest" maxLength={6} />
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">OTP sent to your mobile/email</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("otp_sent")}</p>
               </div>
-              <Button className="w-full h-11 text-base" asChild>
-                <Link to="/dashboard">Verify & Login</Link>
+              <Button className="w-full h-12 text-base" asChild>
+                <Link to="/dashboard">{t("verify_login")}</Link>
               </Button>
               <Button variant="ghost" className="w-full" onClick={() => setStep("phone")}>
-                ← Change number
+                {t("change_number")}
               </Button>
             </div>
           )}
 
           <div className="mt-6 text-center text-sm">
-            Don't have an account?{" "}
+            {t("no_account")}{" "}
             <Link to="/register" className="text-primary font-semibold hover:underline">
-              Register
+              {t("register")}
             </Link>
           </div>
         </div>

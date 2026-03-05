@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, FileText } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const mockSales = [
   { id: 1, date: "2026-03-04", customer: "Ravi Kumar", product: "Fresh Milk", qty: 5, total: 250, status: "Paid" },
@@ -16,22 +17,23 @@ const mockSales = [
 
 const Sales = () => {
   const [showForm, setShowForm] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-header mb-0">Sales</h1>
-        <Button onClick={() => setShowForm(!showForm)}>
-          <Plus className="h-4 w-4 mr-1" /> New Sale
+        <h1 className="page-header mb-0">{t("sales")}</h1>
+        <Button onClick={() => setShowForm(!showForm)} className="h-11">
+          <Plus className="h-4 w-4 mr-1" /> {t("new_sale")}
         </Button>
       </div>
 
       {showForm && (
         <div className="form-section grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><Label>Customer Name</Label><Input className="mt-1.5" placeholder="Customer name" /></div>
+          <div><Label>{t("customer_name")}</Label><Input className="mt-1.5 h-11" placeholder={t("customer_name")} /></div>
           <div>
-            <Label>Product</Label>
-            <Select><SelectTrigger className="mt-1.5"><SelectValue placeholder="Select product" /></SelectTrigger>
+            <Label>{t("product")}</Label>
+            <Select><SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder={t("product")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="milk">Fresh Milk (₹50/L)</SelectItem>
                 <SelectItem value="paneer">Paneer (₹320/kg)</SelectItem>
@@ -40,23 +42,23 @@ const Sales = () => {
               </SelectContent>
             </Select>
           </div>
-          <div><Label>Quantity</Label><Input type="number" className="mt-1.5" placeholder="0" /></div>
+          <div><Label>{t("quantity")}</Label><Input type="number" className="mt-1.5 h-11" placeholder="0" /></div>
           <div>
-            <Label>Total Price (₹)</Label>
-            <Input className="mt-1.5 bg-muted" value="Auto-calculated" readOnly />
+            <Label>{t("total_price")} (₹)</Label>
+            <Input className="mt-1.5 h-11 bg-muted" value="Auto-calculated" readOnly />
           </div>
           <div>
-            <Label>Payment Status</Label>
-            <Select><SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+            <Label>{t("payment_status")}</Label>
+            <Select><SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder={t("payment_status")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="paid">Paid</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="paid">{t("paid")}</SelectItem>
+                <SelectItem value="pending">{t("pending")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-end gap-2">
-            <Button>Add Sale</Button>
-            <Button variant="outline"><FileText className="h-4 w-4 mr-1" /> Generate Invoice</Button>
+          <div className="flex items-end gap-2 flex-wrap">
+            <Button className="h-11">{t("add_sale")}</Button>
+            <Button variant="outline" className="h-11"><FileText className="h-4 w-4 mr-1" /> {t("generate_invoice")}</Button>
           </div>
         </div>
       )}
@@ -65,11 +67,11 @@ const Sales = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Invoice</TableHead>
+              <TableHead>{t("date")}</TableHead>
+              <TableHead>{t("customer")}</TableHead>
+              <TableHead>{t("amount")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead className="text-right">{t("invoice")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,11 +83,11 @@ const Sales = () => {
                 <TableCell>
                   <Badge variant={s.status === "Pending" ? "destructive" : "default"}
                     className={s.status === "Paid" ? "bg-success text-success-foreground" : ""}>
-                    {s.status}
+                    {s.status === "Paid" ? t("paid") : t("pending")}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm"><FileText className="h-4 w-4 mr-1" /> View</Button>
+                  <Button variant="ghost" size="sm"><FileText className="h-4 w-4 mr-1" /> {t("view")}</Button>
                 </TableCell>
               </TableRow>
             ))}
