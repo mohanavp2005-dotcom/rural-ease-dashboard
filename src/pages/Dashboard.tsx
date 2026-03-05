@@ -1,8 +1,9 @@
 import { IndianRupee, Wallet, TrendingUp, AlertTriangle, Clock } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useBusiness, BusinessType } from "@/contexts/BusinessContext";
 import { BusinessSpecificWidgets } from "@/components/BusinessWidgets";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const weeklyData = [
   { day: "Mon", sales: 2400 }, { day: "Tue", sales: 1800 }, { day: "Wed", sales: 3200 },
@@ -17,7 +18,7 @@ const monthlyProfit = [
 
 const Dashboard = () => {
   const { t } = useLanguage();
-  const { businessType } = useBusiness();
+  const { businessType, setBusinessType } = useBusiness();
 
   const stats = [
     { label: t("todays_sales"), value: "₹4,250", icon: IndianRupee, color: "text-success" },
@@ -29,7 +30,21 @@ const Dashboard = () => {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <h1 className="page-header">{t("dashboard")}</h1>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <h1 className="page-header mb-0">{t("dashboard")}</h1>
+        <Select value={businessType} onValueChange={(v) => setBusinessType(v as BusinessType)}>
+          <SelectTrigger className="w-44 h-11">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="dairy">🐄 Dairy</SelectItem>
+            <SelectItem value="poultry">🐔 Poultry</SelectItem>
+            <SelectItem value="grocery">🏪 Grocery</SelectItem>
+            <SelectItem value="farming">🌾 Farming</SelectItem>
+            <SelectItem value="handicrafts">🧶 Handicrafts</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {stats.map((s) => (
