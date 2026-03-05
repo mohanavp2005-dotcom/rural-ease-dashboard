@@ -1,5 +1,8 @@
 import { IndianRupee, Wallet, TrendingUp, AlertTriangle, Clock } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useBusiness } from "@/contexts/BusinessContext";
+import { BusinessSpecificWidgets } from "@/components/BusinessWidgets";
 
 const weeklyData = [
   { day: "Mon", sales: 2400 }, { day: "Tue", sales: 1800 }, { day: "Wed", sales: 3200 },
@@ -12,59 +15,66 @@ const monthlyProfit = [
   { month: "Apr", profit: 14000 }, { month: "May", profit: 22000 }, { month: "Jun", profit: 19000 },
 ];
 
-const stats = [
-  { label: "Today's Sales", value: "₹4,250", icon: IndianRupee, color: "text-success" },
-  { label: "Today's Expenses", value: "₹1,800", icon: Wallet, color: "text-destructive" },
-  { label: "Monthly Profit", value: "₹42,500", icon: TrendingUp, color: "text-primary" },
-  { label: "Low Stock Items", value: "3", icon: AlertTriangle, color: "text-warning" },
-  { label: "Pending Orders", value: "5", icon: Clock, color: "text-info" },
-];
+const Dashboard = () => {
+  const { t } = useLanguage();
+  const { businessType } = useBusiness();
 
-const Dashboard = () => (
-  <div className="animate-fade-in space-y-6">
-    <h1 className="page-header">Dashboard</h1>
+  const stats = [
+    { label: t("todays_sales"), value: "₹4,250", icon: IndianRupee, color: "text-success" },
+    { label: t("todays_expenses"), value: "₹1,800", icon: Wallet, color: "text-destructive" },
+    { label: t("monthly_profit"), value: "₹42,500", icon: TrendingUp, color: "text-primary" },
+    { label: t("low_stock"), value: "3", icon: AlertTriangle, color: "text-warning" },
+    { label: t("pending_orders"), value: "5", icon: Clock, color: "text-info" },
+  ];
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-      {stats.map((s) => (
-        <div key={s.label} className="stat-card flex items-center gap-4">
-          <div className={`p-3 rounded-xl bg-muted ${s.color}`}>
-            <s.icon className="h-6 w-6" />
+  return (
+    <div className="animate-fade-in space-y-6">
+      <h1 className="page-header">{t("dashboard")}</h1>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {stats.map((s) => (
+          <div key={s.label} className="stat-card flex items-center gap-3">
+            <div className={`p-2.5 rounded-xl bg-muted ${s.color} shrink-0`}>
+              <s.icon className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground truncate">{s.label}</p>
+              <p className="text-lg font-bold leading-tight">{s.value}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">{s.label}</p>
-            <p className="text-xl font-bold">{s.value}</p>
-          </div>
+        ))}
+      </div>
+
+      <BusinessSpecificWidgets businessType={businessType} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="stat-card">
+          <h3 className="font-semibold text-lg mb-4">{t("weekly_sales")}</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <Tooltip />
+              <Line type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
-      ))}
-    </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="stat-card">
-        <h3 className="font-semibold text-lg mb-4">Weekly Sales</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={weeklyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
-            <YAxis stroke="hsl(var(--muted-foreground))" />
-            <Tooltip />
-            <Line type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="stat-card">
-        <h3 className="font-semibold text-lg mb-4">Monthly Profit</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={monthlyProfit}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-            <YAxis stroke="hsl(var(--muted-foreground))" />
-            <Tooltip />
-            <Bar dataKey="profit" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="stat-card">
+          <h3 className="font-semibold text-lg mb-4">{t("monthly_profit")}</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={monthlyProfit}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <Tooltip />
+              <Bar dataKey="profit" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Dashboard;

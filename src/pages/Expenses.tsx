@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const mockExpenses = [
   { id: 1, date: "2026-03-04", category: "Feed", amount: 1200, mode: "Cash", notes: "Cattle feed" },
@@ -16,26 +17,27 @@ const mockExpenses = [
 
 const Expenses = () => {
   const [showForm, setShowForm] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-header mb-0">Expenses</h1>
-        <Button onClick={() => setShowForm(!showForm)}>
-          <Plus className="h-4 w-4 mr-1" /> Add Expense
+        <h1 className="page-header mb-0">{t("expenses")}</h1>
+        <Button onClick={() => setShowForm(!showForm)} className="h-11">
+          <Plus className="h-4 w-4 mr-1" /> {t("add_expense")}
         </Button>
       </div>
 
       {showForm && (
         <div className="form-section grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label>Date</Label>
-            <Input type="date" className="mt-1.5" />
+            <Label>{t("date")}</Label>
+            <Input type="date" className="mt-1.5 h-11" />
           </div>
           <div>
-            <Label>Category</Label>
+            <Label>{t("category")}</Label>
             <Select>
-              <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+              <SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder={t("category")} /></SelectTrigger>
               <SelectContent>
                 {["Seeds", "Feed", "Electricity", "Transport", "Salary", "Other"].map((c) => (
                   <SelectItem key={c} value={c.toLowerCase()}>{c}</SelectItem>
@@ -44,13 +46,13 @@ const Expenses = () => {
             </Select>
           </div>
           <div>
-            <Label>Amount (₹)</Label>
-            <Input type="number" placeholder="0" className="mt-1.5" />
+            <Label>{t("amount")} (₹)</Label>
+            <Input type="number" placeholder="0" className="mt-1.5 h-11" />
           </div>
           <div>
-            <Label>Payment Mode</Label>
+            <Label>{t("payment_mode")}</Label>
             <Select>
-              <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select" /></SelectTrigger>
+              <SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder={t("payment_mode")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="upi">UPI</SelectItem>
@@ -59,11 +61,11 @@ const Expenses = () => {
             </Select>
           </div>
           <div className="sm:col-span-2">
-            <Label>Notes</Label>
-            <Textarea placeholder="Optional notes..." className="mt-1.5" />
+            <Label>{t("notes")}</Label>
+            <Textarea placeholder={t("notes")} className="mt-1.5" />
           </div>
           <div className="sm:col-span-2">
-            <Button>Submit Expense</Button>
+            <Button className="h-11">{t("submit")}</Button>
           </div>
         </div>
       )}
@@ -72,11 +74,11 @@ const Expenses = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Mode</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("date")}</TableHead>
+              <TableHead>{t("category")}</TableHead>
+              <TableHead>{t("amount")}</TableHead>
+              <TableHead>{t("mode")}</TableHead>
+              <TableHead className="text-right">{t("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
