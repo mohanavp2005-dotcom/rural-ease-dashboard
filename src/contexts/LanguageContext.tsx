@@ -140,6 +140,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "backup_restore": { en: "Backup & Restore", ta: "காப்பு & மீட்டமை" },
   "backup_desc": { en: "Export or import your business data", ta: "உங்கள் வணிக தரவை ஏற்றுமதி அல்லது இறக்குமதி செய்யுங்கள்" },
   "backup": { en: "Backup", ta: "காப்பு" },
+  "logout": { en: "Logout", ta: "வெளியேறு" },
   "restore": { en: "Restore", ta: "மீட்டமை" },
   "save_changes": { en: "Save Changes", ta: "மாற்றங்களை சேமி" },
   "update_password": { en: "Update Password", ta: "கடவுச்சொல் புதுப்பி" },

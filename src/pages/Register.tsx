@@ -7,18 +7,25 @@ import { Sprout } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useBusiness, BusinessType } from "@/contexts/BusinessContext";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
   const { t } = useLanguage();
   const { setBusinessType, setBusinessName } = useBusiness();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [name, setName] = useState("");
   const [type, setType] = useState<BusinessType>("dairy");
 
   const handleRegister = () => {
-    if (name) setBusinessName(name);
+    if (!name.trim()) {
+      toast({ title: "Please enter business name", variant: "destructive" });
+      return;
+    }
+    setBusinessName(name);
     setBusinessType(type);
-    navigate("/dashboard");
+    toast({ title: t("register") + " ✅", description: "Please login to continue" });
+    navigate("/login");
   };
 
   return (
@@ -35,12 +42,7 @@ const Register = () => {
         <div className="form-section space-y-4">
           <div>
             <Label className="text-base">{t("business_name")}</Label>
-            <Input
-              placeholder="e.g. Krishna Dairy Farm"
-              className="mt-1.5 h-12 text-base"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input placeholder="e.g. Krishna Dairy Farm" className="mt-1.5 h-12 text-base" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
             <Label className="text-base">{t("owner_name")}</Label>
@@ -49,9 +51,7 @@ const Register = () => {
           <div>
             <Label className="text-base">{t("business_type")}</Label>
             <Select value={type} onValueChange={(v) => setType(v as BusinessType)}>
-              <SelectTrigger className="mt-1.5 h-12 text-base">
-                <SelectValue placeholder={t("select_type")} />
-              </SelectTrigger>
+              <SelectTrigger className="mt-1.5 h-12 text-base"><SelectValue placeholder={t("select_type")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="dairy">🐄 Dairy</SelectItem>
                 <SelectItem value="poultry">🐔 Poultry</SelectItem>
@@ -77,11 +77,7 @@ const Register = () => {
             <Label className="text-base">{t("confirm_password")}</Label>
             <Input type="password" placeholder="Re-enter password" className="mt-1.5 h-12 text-base" />
           </div>
-
-          <Button className="w-full h-12 text-base" onClick={handleRegister}>
-            {t("register")}
-          </Button>
-
+          <Button className="w-full h-12 text-base" onClick={handleRegister}>{t("register")}</Button>
           <p className="text-center text-sm">
             {t("have_account")}{" "}
             <Link to="/login" className="text-primary font-semibold hover:underline">{t("login")}</Link>

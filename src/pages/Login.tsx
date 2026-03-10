@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,11 +7,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sprout, Phone, KeyRound, Lock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useBusiness } from "@/contexts/BusinessContext";
 
 const Login = () => {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [loginMethod, setLoginMethod] = useState<"otp" | "password">("otp");
   const { t, lang, setLang } = useLanguage();
+  const { login } = useBusiness();
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    login();
+    navigate("/dashboard");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -20,16 +28,14 @@ const Login = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
             <Sprout className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold">Rural BizManager</h1>
+          <h1 className="text-3xl font-bold">RuralBiz</h1>
           <p className="text-muted-foreground mt-1">{t("manage_business")}</p>
         </div>
 
         <div className="form-section">
           <div className="flex justify-end mb-4">
             <Select value={lang} onValueChange={(v) => setLang(v as "en" | "ta")}>
-              <SelectTrigger className="w-36">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="en">🇬🇧 English</SelectItem>
                 <SelectItem value="ta">🇮🇳 தமிழ்</SelectItem>
@@ -67,16 +73,13 @@ const Login = () => {
                   {t("send_otp")}
                 </Button>
               ) : (
-                <Button className="w-full h-12 text-base" asChild>
-                  <Link to="/dashboard">{t("login")}</Link>
+                <Button className="w-full h-12 text-base" onClick={handleLogin}>
+                  {t("login")}
                 </Button>
               )}
 
-              <Button
-                variant="ghost"
-                className="w-full text-sm"
-                onClick={() => setLoginMethod(loginMethod === "otp" ? "password" : "otp")}
-              >
+              <Button variant="ghost" className="w-full text-sm"
+                onClick={() => setLoginMethod(loginMethod === "otp" ? "password" : "otp")}>
                 {loginMethod === "otp" ? t("login_password") : t("login_otp")}
               </Button>
             </div>
@@ -90,8 +93,8 @@ const Login = () => {
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">{t("otp_sent")}</p>
               </div>
-              <Button className="w-full h-12 text-base" asChild>
-                <Link to="/dashboard">{t("verify_login")}</Link>
+              <Button className="w-full h-12 text-base" onClick={handleLogin}>
+                {t("verify_login")}
               </Button>
               <Button variant="ghost" className="w-full" onClick={() => setStep("phone")}>
                 {t("change_number")}
@@ -101,9 +104,7 @@ const Login = () => {
 
           <div className="mt-6 text-center text-sm">
             {t("no_account")}{" "}
-            <Link to="/register" className="text-primary font-semibold hover:underline">
-              {t("register")}
-            </Link>
+            <Link to="/register" className="text-primary font-semibold hover:underline">{t("register")}</Link>
           </div>
         </div>
       </div>

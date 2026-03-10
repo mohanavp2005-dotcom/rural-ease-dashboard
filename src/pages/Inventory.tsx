@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,17 +7,60 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const mockProducts = [
-  { id: 1, name: "Fresh Milk", category: "Dairy", qty: 50, unit: "liters", cost: 30, sell: 50, minStock: 10 },
-  { id: 2, name: "Paneer", category: "Dairy", qty: 5, unit: "kg", cost: 200, sell: 320, minStock: 8 },
-  { id: 3, name: "Curd", category: "Dairy", qty: 20, unit: "kg", cost: 40, sell: 60, minStock: 5 },
-  { id: 4, name: "Ghee", category: "Dairy", qty: 3, unit: "liters", cost: 400, sell: 600, minStock: 5 },
-];
+import { useBusiness } from "@/contexts/BusinessContext";
+import { defaultProducts, ProductData } from "@/data/businessData";
+import { useToast } from "@/hooks/use-toast";
 
 const Inventory = () => {
   const [showForm, setShowForm] = useState(false);
   const { t } = useLanguage();
+  const { businessType } = useBusiness();
+  const { toast } = useToast();
+
+  const storageKey = `inventory_${businessType}`;
+  const [products, setProducts] = useState<ProductData[]>(() => {
+    const saved = localStorage.getItem(storageKey);
+    return saved ? JSON.parse(saved) : defaultProducts[businessType];
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem(`inventory_${businessType}`);
+    setProducts(saved ? JSON.parse(saved) : defaultProducts[businessType]);
+  }, [businessType]);
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(products));
+  }, [products, storageKey]);
+
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [qty, setQty] = useState("");
+  const [unit, setUnit] = useState("kg");
+  const [cost, setCost] = useState("");
+  const [sell, setSell] = useState("");
+  const [minStock, setMinStock] = useState("5");
+
+  const handleAdd = () => {
+    if (!name || !qty || !sell) {
+      toast({ title: "Please fill required fields", variant: "destructive" });
+      return;
+    }
+    const newProduct: ProductData = {
+      id: Date.now(),
+      name, category, qty: Number(qty), unit,
+      cost: Number(cost), sell: Number(sell), minStock: Number(minStock),
+      emoji: "📦",
+    };
+    setProducts((prev) => [...prev, newProduct]);
+    setName(""); setCategory(""); setQty(""); setCost(""); setSell(""); setMinStock("5");
+    setShowForm(false);
+    toast({ title: t("add_product") + " ✅" });
+  };
+
+  const handleDelete = (id: number) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    toast({ title: "Product deleted" });
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -30,12 +73,13 @@ const Inventory = () => {
 
       {showForm && (
         <div className="form-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div><Label>{t("product_name")}</Label><Input className="mt-1.5 h-11" placeholder="e.g. Fresh Milk" /></div>
-          <div><Label>{t("category")}</Label><Input className="mt-1.5 h-11" placeholder="e.g. Dairy" /></div>
-          <div><Label>{t("quantity")}</Label><Input type="number" className="mt-1.5 h-11" placeholder="0" /></div>
+          <div><Label>{t("product_name")}</Label><Input className="mt-1.5 h-11" value={name} onChange={(e) => setName(e.target.value)} /></div>
+          <div><Label>{t("category")}</Label><Input className="mt-1.5 h-11" value={category} onChange={(e) => setCategory(e.target.value)} /></div>
+          <div><Label>{t("quantity")}</Label><Input type="number" className="mt-1.5 h-11" value={qty} onChange={(e) => setQty(e.target.value)} /></div>
           <div>
             <Label>{t("unit")}</Label>
-            <Select><SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder={t("unit")} /></SelectTrigger>
+            <Select value={unit} onValueChange={setUnit}>
+              <SelectTrigger className="mt-1.5 h-11"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="kg">Kg</SelectItem>
                 <SelectItem value="liters">Liters</SelectItem>
@@ -43,10 +87,10 @@ const Inventory = () => {
               </SelectContent>
             </Select>
           </div>
-          <div><Label>{t("cost_price")} (₹)</Label><Input type="number" className="mt-1.5 h-11" placeholder="0" /></div>
-          <div><Label>{t("selling_price")} (₹)</Label><Input type="number" className="mt-1.5 h-11" placeholder="0" /></div>
-          <div><Label>{t("min_stock")}</Label><Input type="number" className="mt-1.5 h-11" placeholder="5" /></div>
-          <div className="flex items-end"><Button className="h-11">{t("add_product")}</Button></div>
+          <div><Label>{t("cost_price")} (₹)</Label><Input type="number" className="mt-1.5 h-11" value={cost} onChange={(e) => setCost(e.target.value)} /></div>
+          <div><Label>{t("selling_price")} (₹)</Label><Input type="number" className="mt-1.5 h-11" value={sell} onChange={(e) => setSell(e.target.value)} /></div>
+          <div><Label>{t("min_stock")}</Label><Input type="number" className="mt-1.5 h-11" value={minStock} onChange={(e) => setMinStock(e.target.value)} /></div>
+          <div className="flex items-end"><Button className="h-11" onClick={handleAdd}>{t("add_product")}</Button></div>
         </div>
       )}
 
@@ -62,9 +106,9 @@ const Inventory = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockProducts.map((p) => (
+            {products.map((p) => (
               <TableRow key={p.id}>
-                <TableCell className="font-medium">{p.name}</TableCell>
+                <TableCell className="font-medium">{p.emoji} {p.name}</TableCell>
                 <TableCell>{p.qty} {p.unit}</TableCell>
                 <TableCell>₹{p.sell}</TableCell>
                 <TableCell>
@@ -75,7 +119,9 @@ const Inventory = () => {
                 </TableCell>
                 <TableCell className="text-right space-x-1">
                   <Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

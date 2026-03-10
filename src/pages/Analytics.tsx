@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { Download, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useBusiness } from "@/contexts/BusinessContext";
+import { bestSellingByBusiness } from "@/data/businessData";
 
 const Analytics = () => {
   const { t } = useLanguage();
+  const { businessType } = useBusiness();
 
   const pieData = [
     { name: t("income"), value: 85000, color: "hsl(var(--success))" },
@@ -16,11 +19,7 @@ const Analytics = () => {
     { month: "Apr", profit: 14000 }, { month: "May", profit: 22000 }, { month: "Jun", profit: 19000 },
   ];
 
-  const bestSelling = [
-    { name: "Fresh Milk", sold: 320, revenue: 16000 },
-    { name: "Curd", sold: 180, revenue: 10800 },
-    { name: "Paneer", sold: 45, revenue: 14400 },
-  ];
+  const bestSelling = bestSellingByBusiness[businessType];
 
   return (
     <div className="animate-fade-in space-y-6">
