@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Wallet, Package, ShoppingCart, BarChart3, Store, Settings, Bell,
+  LayoutDashboard, Wallet, Package, ShoppingCart, BarChart3, Store, Settings, Bell, ClipboardList,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
