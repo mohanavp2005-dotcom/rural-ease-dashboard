@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Wallet, Package, ShoppingCart, BarChart3, Store, Settings, Bell,
+  LayoutDashboard, Wallet, Package, ShoppingCart, BarChart3, Store, Settings, Bell, ClipboardList,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -16,6 +16,7 @@ const navItems = [
   { key: "sales", url: "/sales", icon: ShoppingCart },
   { key: "analytics", url: "/analytics", icon: BarChart3 },
   { key: "online_store", url: "/store", icon: Store },
+  { key: "orders", url: "/orders", icon: ClipboardList },
   { key: "notifications", url: "/notifications", icon: Bell },
   { key: "settings", url: "/settings", icon: Settings },
 ];

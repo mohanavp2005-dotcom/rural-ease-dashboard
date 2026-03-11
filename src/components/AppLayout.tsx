@@ -2,20 +2,30 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { BottomNav } from "@/components/BottomNav";
-import { Bell, Sprout, LogOut } from "lucide-react";
+import { Bell, Sprout, LogOut, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
 export function AppLayout() {
-  const { businessName, logout } = useBusiness();
+  const { business, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     navigate("/login");
+  };
+
+  const copyStoreLink = () => {
+    if (business?.store_code) {
+      const link = `${window.location.origin}/customer/store/${business.store_code}`;
+      navigator.clipboard.writeText(link);
+      toast({ title: "Store link copied! 📋", description: "Share this with your customers" });
+    }
   };
 
   return (
@@ -30,10 +40,15 @@ export function AppLayout() {
               <SidebarTrigger className="hidden md:flex" />
               <div className="flex items-center gap-2">
                 <Sprout className="h-5 w-5 text-primary" />
-                <span className="font-bold text-lg truncate">{businessName || "RuralBiz"}</span>
+                <span className="font-bold text-lg truncate">{business?.name || "RuralBiz"}</span>
               </div>
             </div>
             <div className="flex items-center gap-1">
+              {business?.store_code && (
+                <Button variant="ghost" size="sm" onClick={copyStoreLink} title="Copy store link">
+                  <Copy className="h-4 w-4 mr-1" /> Share Store
+                </Button>
+              )}
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/notifications">
                   <Bell className="h-5 w-5" />
