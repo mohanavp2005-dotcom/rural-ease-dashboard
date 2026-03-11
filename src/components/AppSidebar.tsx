@@ -16,6 +16,7 @@ const navItems = [
   { key: "sales", url: "/sales", icon: ShoppingCart },
   { key: "analytics", url: "/analytics", icon: BarChart3 },
   { key: "online_store", url: "/store", icon: Store },
+  { key: "orders", url: "/orders", icon: ClipboardList },
   { key: "notifications", url: "/notifications", icon: Bell },
   { key: "settings", url: "/settings", icon: Settings },
 ];
