@@ -41,6 +41,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "online_store": { en: "Online Store", ta: "ஆன்லைன் கடை" },
   "notifications": { en: "Notifications", ta: "அறிவிப்புகள்" },
   "settings": { en: "Settings", ta: "அமைப்புகள்" },
+  "orders": { en: "Orders", ta: "ஆர்டர்கள்" },
 
   // Dashboard
   "todays_sales": { en: "Today's Sales", ta: "இன்றைய விற்பனை" },
